@@ -6,6 +6,10 @@ name = "pypi"
 [packages]
 fastapi = "*"
 uvicorn = "*"
+python-dotenv = "*"
+sqlmodel = "*"
+alembic = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
