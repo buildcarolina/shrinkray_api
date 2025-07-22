@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, Depends
 
-from sqlmodel import Session, select, func, literal_column
+from sqlmodel import Session, select
 from db import get_session
 
 from models.urls import Urls
@@ -17,6 +17,7 @@ async def root():
 @app.get("/urls")
 async def get_all_urls(session: Session = Depends(get_session)):
     statement = select(Urls)
+    print(f"SQL Statement is: {statement}")
     results = session.exec(statement).all()
     return results
 
@@ -24,8 +25,9 @@ async def get_all_urls(session: Session = Depends(get_session)):
 @app.get("/urls/{id}")
 async def get_single_url(id: str, session: Session = Depends(get_session)):
     statement = select(Urls).where(Urls.id == id)
-    results = session.exec(statement).all()
-    return {"url id": id}
+    result = session.exec(statement).one()
+
+    return result
 
 
 @app.post("/urls/add")
