@@ -22,7 +22,9 @@ async def get_all_urls(session: Session = Depends(get_session)):
 
 
 @app.get("/urls/{id}")
-async def get_single_url(id: str):
+async def get_single_url(id: str, session: Session = Depends(get_session)):
+    statement = select(Urls).where(Urls.id == id)
+    results = session.exec(statement).all()
     return {"url id": id}
 
 
