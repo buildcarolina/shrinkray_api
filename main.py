@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 
 from sqlmodel import Session, select
 from db import get_session
@@ -8,6 +9,20 @@ from models.urls import Urls
 
 app = FastAPI()
 
+# Setup our origins...
+# ...for now it's just our local environments
+origins = [
+    "http://localhost:5173"
+]
+
+# Add the CORS middleware...
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
