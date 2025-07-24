@@ -6,4 +6,7 @@ env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 
 DATABASE_URL = os.getenv('SUPABASE_URL')
-
+SECRET_KEY = os.getenv('SECRET_KEY')
+ALGORITHM = os.getenv('ALGORITHM')
+CREDENTIALS_EXCEPTION = "Invalid Email or Password"
+ACCESS_TOKEN_EXPIRE_MINUTES=90
