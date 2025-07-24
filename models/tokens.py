@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Field, Column, String, DateTime, func
+from sqlmodel import Field, Column, String, DateTime, func
 from datetime import datetime, timedelta, timezone
 
 import config
@@ -7,8 +7,8 @@ import jwt
 from models.base import Base
 
 
-class BlacklistedToken(Base):
-    __tablename__ = 'blacklisted_tokens'
+class BlacklistedToken(Base, table=True):
+    __tablename__: str = 'blacklisted_tokens'
 
     created_at: datetime = Field(sa_column=Column(
         DateTime(timezone=True), server_default=func.now()))
@@ -18,7 +18,9 @@ class BlacklistedToken(Base):
         return f"<BlacklistedToken(id={self.id}, created_at={self.created_at})>"
 
 
-class Token(Base):
+class Token(Base, table=True):
+    __tablename__: str = 'tokens'
+
     access_token: str
     token_type: str = "bearer"
 

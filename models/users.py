@@ -2,12 +2,14 @@ from sqlmodel import SQLModel, Field, Column, String, UniqueConstraint
 from pydantic import EmailStr
 from uuid import UUID, uuid4
 import bcrypt
+from models.base import Base
 
-class User(SQLModel):
-    __tablename__ = "users"
-
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
+class UserBase(Base):
     email: EmailStr = Field(sa_column=Column(String(225), unique=True))
+    name: str = Field(sa_column=Column(String(225), nullable=True))
+
+class User(UserBase, table=True):
+    __tablename__ = "users"
     hashed_password: str = Field(sa_column=Column(String))
 
     UniqueConstraint("email", name="uq_user_email")
@@ -31,15 +33,13 @@ class User(SQLModel):
     def validate_password(self, pwd) -> bool:
         return bcrypt.checkpw(password=pwd.encode(), hashed_password=self.hashed_password.encode())
 
-class UserBaseSchema(User):
-    pass
 
-
-class UserSchema(UserBaseSchema):
+class UserSchema(UserBase):
     class Config:
         populate_by_name = True
 
-class UserAccountSchema(UserBaseSchema):
+class UserAccountSchema(Base):
+    email: EmailStr
     """ We set an alias for the field so that when this field is serialized or deserialized,
     the name "password" will be used instead of "hashed_password." """
     hashed_password: str = Field(alias="password")
