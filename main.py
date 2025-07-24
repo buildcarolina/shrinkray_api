@@ -69,16 +69,17 @@ async def add_url(payload: Urls, session: Session = Depends(get_session)):
 
 
 @app.post('/register', response_model=UserSchema)
-def register_user(payload: UserAccountSchema):
+def register_user(payload: UserAccountSchema, session: Session = Depends(get_session)):
     """Processes request to register user account."""
     payload.hashed_password = User.hash_password(payload.hashed_password)
-    return create_user(user=payload)
+    return create_user(user=payload, session=session)
 
 
 @app.post('/login', status_code=200)
-async def login(payload: UserAccountSchema):
+
+async def login(payload: UserAccountSchema, session: Session = Depends(get_session)):
     try:
-        user: User = get_user(email=payload.email)
+        user: User = get_user(email=payload.email, session=session)
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -86,7 +87,7 @@ async def login(payload: UserAccountSchema):
         )
 
     is_validated: bool = user.validate_password(payload.hashed_password)
-
+    print(f"Is user validated? {is_validated}")
     if not is_validated:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

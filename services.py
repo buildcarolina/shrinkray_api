@@ -14,8 +14,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 # I'm on the fence about seperating these methods into this file
 # There's a case to be made that they could also work in the model as static methods?
 
-
-def create_user(user: UserAccountSchema, session: Session = Depends(get_session)):
+def create_user(user: UserAccountSchema, session: Session):
     db_user = User(**user.dict())
     session.add(db_user)
     session.commit()
@@ -23,7 +22,7 @@ def create_user(user: UserAccountSchema, session: Session = Depends(get_session)
     return db_user
 
 
-def get_user(email: str, session: Session = Depends(get_session)):
+def get_user(email: str, session: Session):
     return session.query(User).filter(User.email == email).one()
 
 
