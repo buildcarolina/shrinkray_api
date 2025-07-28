@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status, Query, Depends
+from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlmodel import Session, select
 

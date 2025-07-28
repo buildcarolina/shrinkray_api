@@ -1,6 +1,5 @@
-from sqlmodel import SQLModel, Field, Column, String, UniqueConstraint
+from sqlmodel import Field, Column, String, UniqueConstraint
 from pydantic import EmailStr
-from uuid import UUID, uuid4
 import bcrypt
 from models.base import Base
 
@@ -9,7 +8,7 @@ class UserBase(Base):
     name: str = Field(sa_column=Column(String(225), nullable=True))
 
 class User(UserBase, table=True):
-    __tablename__ = "users"
+    __tablename__: str = "users"
     hashed_password: str = Field(sa_column=Column(String))
 
     UniqueConstraint("email", name="uq_user_email")
