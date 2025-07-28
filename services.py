@@ -35,17 +35,18 @@ async def get_current_user_token(token: str = Depends(oauth2_scheme), session: S
     try:
         payload = jwt.decode(token, config.SECRET_KEY,
                              algorithms=[config.ALGORITHM])
-        email: str = payload.get("email")
+        email: str | None = payload.get("email")
 
-        if is_token_blacklisted(token):
+        if not email or is_token_blacklisted(token, session):
             raise credentials_exception
-        if email is None:
-            raise credentials_exception
+
+
         token_data = TokenData(email=email)
     except jwt.ExpiredSignatureError:
         raise credentials_exception
     except jwt.DecodeError:
         raise credentials_exception
+
     user = session.query(User).filter(User.email == email).first()
     if user is None:
         raise credentials_exception

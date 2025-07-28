@@ -49,6 +49,6 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-def is_token_blacklisted(token):
+def is_token_blacklisted(token, session):
     # Check if the token is blacklisted in the database
     return session.query(BlacklistedToken).filter_by(token=token).first() is not None
