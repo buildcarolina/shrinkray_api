@@ -23,7 +23,8 @@ def create_user(user: UserAccountSchema, session: Session):
 
 
 def get_user(email: str, session: Session):
-    return session.query(User).filter(User.email == email).one()
+    statement = select(User).where(User.email == email)
+    return session.exec(statement).one()
 
 
 async def get_current_user_token(token: str = Depends(oauth2_scheme), session: Session = Depends(get_session)):
@@ -33,6 +34,9 @@ async def get_current_user_token(token: str = Depends(oauth2_scheme), session: S
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        if config.ALGORITHM is None:
+          raise ValueError("ALGORITHM configuration is required")
+
         payload = jwt.decode(token, config.SECRET_KEY,
                              algorithms=[config.ALGORITHM])
         email: str | None = payload.get("email")
@@ -47,7 +51,8 @@ async def get_current_user_token(token: str = Depends(oauth2_scheme), session: S
     except jwt.DecodeError:
         raise credentials_exception
 
-    user = session.query(User).filter(User.email == email).first()
+    statement = select(User).where(User.email == email)
+    user = session.exec(statement).one()
     if user is None:
         raise credentials_exception
     return user
