@@ -10,6 +10,9 @@ python-dotenv = "*"
 sqlmodel = "*"
 alembic = "*"
 psycopg2 = "*"
+bcrypt = "*"
+pyjwt = "*"
+pydantic = {extras = ["email"], version = "*"}
 
 [dev-packages]
 
