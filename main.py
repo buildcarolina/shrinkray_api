@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from db import get_session
 
 from models.urls import Urls
-from models.users import User, UserSchema, UserAccountSchema
+from models.users import User, UserSchema, UserAccountSchema, UserRegistrationSchema
 from models.tokens import Token, BlacklistedToken, create_access_token
 
 import config
@@ -67,7 +67,7 @@ async def add_url(payload: Urls, session: Session = Depends(get_session)):
 
 
 @app.post('/register', response_model=UserSchema)
-def register_user(payload: UserAccountSchema, session: Session = Depends(get_session)):
+def register_user(payload: UserRegistrationSchema, session: Session = Depends(get_session)):
     """Processes request to register user account."""
     payload.hashed_password = User.hash_password(payload.hashed_password)
     return create_user(user=payload, session=session)
