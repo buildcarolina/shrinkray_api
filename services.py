@@ -14,6 +14,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 # I'm on the fence about seperating these methods into this file
 # There's a case to be made that they could also work in the model as static methods?
 
+
 def create_user(user: UserAccountSchema, session: Session):
     db_user = User(**user.dict())
     session.add(db_user)
@@ -35,7 +36,7 @@ async def get_current_user_token(token: str = Depends(oauth2_scheme), session: S
     )
     try:
         if config.ALGORITHM is None:
-          raise ValueError("ALGORITHM configuration is required")
+            raise ValueError("ALGORITHM configuration is required")
 
         payload = jwt.decode(token, config.SECRET_KEY,
                              algorithms=[config.ALGORITHM])
@@ -43,7 +44,6 @@ async def get_current_user_token(token: str = Depends(oauth2_scheme), session: S
 
         if not email or is_token_blacklisted(token, session):
             raise credentials_exception
-
 
         token_data = TokenData(email=email)
     except jwt.ExpiredSignatureError:
@@ -55,4 +55,4 @@ async def get_current_user_token(token: str = Depends(oauth2_scheme), session: S
     user = session.exec(statement).one()
     if user is None:
         raise credentials_exception
-    return user
+    return token_data

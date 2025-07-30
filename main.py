@@ -59,7 +59,7 @@ async def get_single_url(id: str, session: Session = Depends(get_session)):
 
 
 @app.post("/urls/add")
-async def add_url(payload: Urls, session: Session = Depends(get_session)):
+async def add_url(payload: Urls, user: User = Depends(get_current_user_token), session: Session = Depends(get_session)):
     new_url = Urls(title=payload.title, long_url=payload.long_url,
                    short_url=payload.short_url, user_id=payload.user_id)
     session.add(new_url)
